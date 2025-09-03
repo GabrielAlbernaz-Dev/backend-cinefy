@@ -1,0 +1,46 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: cinefy-db
+    environment:
+      POSTGRES_DB: cinefy
+      POSTGRES_USER: cinefyuser
+      POSTGRES_PASSWORD: cinefypass
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: cinefy-rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: cinefy
+      RABBITMQ_DEFAULT_PASS: cinefy
+
+#  app:
+#    build: .
+#    container_name: cinefy-app
+#    depends_on:
+#      - db
+#      - rabbitmq
+#    environment:
+#      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/cinefy
+#      SPRING_DATASOURCE_USERNAME: cinefyuser
+#      SPRING_DATASOURCE_PASSWORD: cinefypass
+#      SPRING_RABBITMQ_HOST: rabbitmq
+#      SPRING_RABBITMQ_USERNAME: cinefy
+#      SPRING_RABBITMQ_PASSWORD: cinefypass
+#    ports:
+#      - "8080:8080"
+    # volumes:
+    #   - .:/app # Descomente para desenvolvimento local
+
+volumes:
+  db_data:
+
