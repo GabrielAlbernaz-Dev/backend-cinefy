@@ -1,6 +1,7 @@
 package com.gabrielalbernazdev.backend_cinefy.catalog.movie;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,5 +11,10 @@ public class MovieController {
     @GetMapping
     public String hello() {
         return "Hello, Movies!";
+    }
+
+    @PostMapping
+    public String create() {
+        return "Create Movie";
     }
 }

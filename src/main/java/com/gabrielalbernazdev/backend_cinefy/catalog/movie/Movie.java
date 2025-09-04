@@ -1,17 +1,29 @@
 package com.gabrielalbernazdev.backend_cinefy.catalog.movie;
 
+import com.gabrielalbernazdev.backend_cinefy.catalog.cast.Person;
+import com.gabrielalbernazdev.backend_cinefy.catalog.genre.Genre;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
 @Table
 public class Movie {
+    private static final int MIN_DURATION = 1;
+    private static final int MIN_YEAR = 1900;
+    private static final int MAX_YEAR = 2100;
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @NotBlank
     @Column(nullable = false, length = 155)
     private String title;
 
@@ -20,11 +32,30 @@ public class Movie {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ExhibitionStatus status = ExhibitionStatus.DRAFT;
+    private ExhibitionStatus status = ExhibitionStatus.DRAFT_UNRELEASED;
 
+    @ManyToMany
+    @JoinTable(
+        name = "movies_genres",
+        joinColumns = @JoinColumn(name = "movie_id", nullable = false),
+        inverseJoinColumns = @JoinColumn(name = "genre_id", nullable = false)
+    )
+    public Set<Genre> genres = new HashSet<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "movie_cast",
+            joinColumns = @JoinColumn(name = "movie_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "person_id", nullable = false)
+    )
+    public Set<Person> cast = new HashSet<>();
+
+    @Min(value = MIN_YEAR, message = "The year cannot less than " + MIN_YEAR + ".")
+    @Max(value = MAX_YEAR, message = "The year cannot be greater than " + MAX_YEAR + ".")
     @Column(name = "release_year", length = 4)
     private Integer releaseYear;
 
+    @Min(value = MIN_DURATION, message = "The duration cannot be less than " + MIN_DURATION + "minutes.")
     @Column(name = "duration_min")
     private Integer durationMin;
 
@@ -38,8 +69,108 @@ public class Movie {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
+    @PrePersist
+    public void prePersist() {
+        if(createdAt == null) {
+            createdAt = LocalDateTime.now();
+        }
+    }
+
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    protected Movie() {}
+
+    private Movie(String title, String description, Integer duration, IndicativeRating indicativeRating, Set<Genre> genres, Set<Person> cast, ExhibitionStatus status) {
+        this.title = title;
+        this.description = description;
+        this.durationMin = duration;
+        this.indicativeRating = indicativeRating;
+        this.genres = genres;
+        this.cast = cast;
+        this.status = status;
+    }
+
+    public static Movie create(String title, String description, Integer duration, IndicativeRating indicativeRating, Set<Genre> genres, Set<Person> cast, ExhibitionStatus status) {
+        return new Movie(title, description, duration, indicativeRating, genres, cast, status);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public ExhibitionStatus getStatus() {
+        return status;
+    }
+
+    public Set<Genre> getGenres() {
+        return genres;
+    }
+
+    public Integer getReleaseYear() {
+        return releaseYear;
+    }
+
+    public Integer getDurationMin() {
+        return durationMin;
+    }
+
+    public IndicativeRating getIndicativeRating() {
+        return indicativeRating;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void updateInfo(String title, String description, Integer duration, IndicativeRating indicativeRating, Set<Genre> genres, Set<Person> cast) {
+        this.title = title;
+        this.description = description;
+        this.durationMin = duration;
+        this.indicativeRating = indicativeRating;
+        this.genres = genres;
+        this.cast = cast;
+    }
+
+    public void releasePreview() {
+        this.status = status.releasePreview();
+    }
+
+    public void startShowing() {
+        this.status = status.startShowing();
+    }
+
+    public void endExhibition() {
+        this.status = status.endExhibition();
+    }
+
+    public void putOnHold() {
+        this.status = status.putOnHold();
+    }
+
+    public void resumePreview() {
+        this.status = status.resumePreview();
+    }
+
+    public void resumeShowing() {
+        this.status = status.resumeShowing();
+    }
+
+    public void archive() {
+        this.status = status.archive();
     }
 }

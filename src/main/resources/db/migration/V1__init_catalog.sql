@@ -25,7 +25,7 @@ CREATE TABLE IF NOT EXISTS movies (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     title VARCHAR(155) NOT NULL,
     description VARCHAR(2000),
-    status VARCHAR(20) NOT NULL DEFAULT 'DRAFT',
+    status VARCHAR(20) NOT NULL DEFAULT 'DRAFT_UNRELEASED',
     release_year INT,
     duration_min INT,
     indicative_rating VARCHAR(3) DEFAULT 'L',
@@ -48,7 +48,7 @@ CREATE INDEX IF NOT EXISTS ix_movies_genres_genre ON movies_genres(genre_id);
 CREATE TABLE IF NOT EXISTS movie_cast (
     movie_id UUID NOT NULL REFERENCES movies(id) ON DELETE CASCADE,
     person_id UUID NOT NULL REFERENCES persons(id) ON DELETE RESTRICT,
-    role VARCHAR(10) NOT NULL DEFAULT 'OTHER',
+    role VARCHAR(50) NOT NULL DEFAULT 'OTHER',
     character_name VARCHAR(155),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (movie_id, person_id, role)
