@@ -12,13 +12,13 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-@Entity
-@Table
-public class Movie {
-    private static final int MIN_DURATION = 1;
-    private static final int MIN_YEAR = 1900;
-    private static final int MAX_YEAR = 2100;
+import static com.gabrielalbernazdev.backend_cinefy.catalog.movie.MovieConstants.MIN_YEAR;
+import static com.gabrielalbernazdev.backend_cinefy.catalog.movie.MovieConstants.MAX_YEAR;
+import static com.gabrielalbernazdev.backend_cinefy.catalog.movie.MovieConstants.MIN_DURATION;
 
+@Entity
+@Table(name = "movies")
+public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
@@ -115,6 +115,10 @@ public class Movie {
 
     public Set<Genre> getGenres() {
         return genres;
+    }
+
+    public Set<Person> getCast() {
+        return cast;
     }
 
     public Integer getReleaseYear() {

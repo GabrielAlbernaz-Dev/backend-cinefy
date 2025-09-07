@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table
+@Table(name = "persons")
 public class Person {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -14,10 +14,6 @@ public class Person {
 
     @Column(nullable = false, length = 155)
     private String name;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false, length = 10)
-    private CastRole role = CastRole.OTHER;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
