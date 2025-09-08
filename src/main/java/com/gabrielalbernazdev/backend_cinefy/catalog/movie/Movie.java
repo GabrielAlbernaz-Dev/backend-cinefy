@@ -1,6 +1,5 @@
 package com.gabrielalbernazdev.backend_cinefy.catalog.movie;
 
-import com.gabrielalbernazdev.backend_cinefy.catalog.cast.Person;
 import com.gabrielalbernazdev.backend_cinefy.catalog.genre.Genre;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
@@ -11,6 +10,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import com.gabrielalbernazdev.backend_cinefy.catalog.cast.MovieCast;
 
 import static com.gabrielalbernazdev.backend_cinefy.catalog.movie.MovieConstants.MIN_YEAR;
 import static com.gabrielalbernazdev.backend_cinefy.catalog.movie.MovieConstants.MAX_YEAR;
@@ -42,13 +43,8 @@ public class Movie {
     )
     public Set<Genre> genres = new HashSet<>();
 
-    @ManyToMany
-    @JoinTable(
-            name = "movie_cast",
-            joinColumns = @JoinColumn(name = "movie_id", nullable = false),
-            inverseJoinColumns = @JoinColumn(name = "person_id", nullable = false)
-    )
-    public Set<Person> cast = new HashSet<>();
+    @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MovieCast> cast = new HashSet<>();
 
     @Min(value = MIN_YEAR, message = "The year cannot less than " + MIN_YEAR + ".")
     @Max(value = MAX_YEAR, message = "The year cannot be greater than " + MAX_YEAR + ".")
@@ -83,18 +79,37 @@ public class Movie {
 
     protected Movie() {}
 
-    private Movie(String title, String description, Integer duration, IndicativeRating indicativeRating, Set<Genre> genres, Set<Person> cast, ExhibitionStatus status) {
+    private Movie(
+        String title,
+        String description,
+        ExhibitionStatus status,
+        Set<Genre> genres,
+        Set<MovieCast> cast,
+        Integer releaseYear,
+        Integer duration,
+        IndicativeRating indicativeRating
+    ) {
         this.title = title;
         this.description = description;
+        this.status = status;
+        this.releaseYear = releaseYear;
         this.durationMin = duration;
         this.indicativeRating = indicativeRating;
         this.genres = genres;
         this.cast = cast;
-        this.status = status;
     }
 
-    public static Movie create(String title, String description, Integer duration, IndicativeRating indicativeRating, Set<Genre> genres, Set<Person> cast, ExhibitionStatus status) {
-        return new Movie(title, description, duration, indicativeRating, genres, cast, status);
+    public static Movie create(
+        String title,
+        String description,
+        ExhibitionStatus status,
+        Set<Genre> genres,
+        Set<MovieCast> cast,
+        Integer releaseYear,
+        Integer duration,
+        IndicativeRating indicativeRating
+    ) {
+        return new Movie(title, description, status, genres, cast, releaseYear, duration, indicativeRating);
     }
 
     public UUID getId() {
@@ -117,7 +132,7 @@ public class Movie {
         return genres;
     }
 
-    public Set<Person> getCast() {
+    public Set<MovieCast> getCast() {
         return cast;
     }
 
@@ -141,7 +156,7 @@ public class Movie {
         return updatedAt;
     }
 
-    public void updateInfo(String title, String description, Integer duration, IndicativeRating indicativeRating, Set<Genre> genres, Set<Person> cast) {
+    public void updateInfo(String title, String description, Integer duration, IndicativeRating indicativeRating, Set<Genre> genres, Set<MovieCast> cast) {
         this.title = title;
         this.description = description;
         this.durationMin = duration;

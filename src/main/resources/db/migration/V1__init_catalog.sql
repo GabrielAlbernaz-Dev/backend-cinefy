@@ -45,16 +45,17 @@ CREATE TABLE IF NOT EXISTS movies_genres (
 
 CREATE INDEX IF NOT EXISTS ix_movies_genres_genre ON movies_genres(genre_id);
 
-CREATE TABLE IF NOT EXISTS movie_cast (
+CREATE TABLE IF NOT EXISTS movie_casts (
     movie_id UUID NOT NULL REFERENCES movies(id) ON DELETE CASCADE,
     person_id UUID NOT NULL REFERENCES persons(id) ON DELETE RESTRICT,
     role VARCHAR(50) NOT NULL DEFAULT 'OTHER',
     character_name VARCHAR(155),
     created_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ,
     PRIMARY KEY (movie_id, person_id, role)
 );
 
-CREATE INDEX IF NOT EXISTS ix_movie_cast_movie ON movie_cast(movie_id);
-CREATE INDEX IF NOT EXISTS ix_movie_cast_person ON movie_cast(person_id);
-CREATE INDEX IF NOT EXISTS ix_movie_cast_role ON movie_cast(role);
-CREATE INDEX IF NOT EXISTS ix_movie_cast_billing ON movie_cast(movie_id, role);
+CREATE INDEX IF NOT EXISTS ix_movie_casts_movie ON movie_casts(movie_id);
+CREATE INDEX IF NOT EXISTS ix_movie_casts_person ON movie_casts(person_id);
+CREATE INDEX IF NOT EXISTS ix_movie_casts_role ON movie_casts(role);
+CREATE INDEX IF NOT EXISTS ix_movie_casts_billing ON movie_casts(movie_id, role);

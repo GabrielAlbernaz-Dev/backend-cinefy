@@ -17,7 +17,7 @@ public class MovieService {
     }
 
     @Transactional(readOnly = true)
-    public Movie findById(UUID id) {
+    public Movie getById(UUID id) {
         return movieRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
     }
@@ -27,11 +27,12 @@ public class MovieService {
         Movie movie = Movie.create(
             request.title(),
             request.description(),
-            request.durationMin(),
-            request.indicativeRating(),
+            request.status(),
             request.genres(),
             request.cast(),
-            request.status()
+            request.releaseYear(),
+            request.durationMin(),
+            request.indicativeRating()
         );
         movieRepository.save(movie);
         return movie;

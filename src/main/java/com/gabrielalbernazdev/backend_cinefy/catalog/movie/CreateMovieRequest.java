@@ -1,7 +1,7 @@
 package com.gabrielalbernazdev.backend_cinefy.catalog.movie;
 
+import com.gabrielalbernazdev.backend_cinefy.catalog.cast.MovieCast;
 import com.gabrielalbernazdev.backend_cinefy.catalog.genre.Genre;
-import com.gabrielalbernazdev.backend_cinefy.catalog.cast.Person;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -26,13 +26,13 @@ public record CreateMovieRequest(
     Set<Genre> genres,
 
     @NotNull
-    Set<Person> cast,
+    Set<MovieCast> cast,
 
     @Min(value = MIN_YEAR, message = "The year cannot less than " + MIN_YEAR + ".")
     @Max(value = MAX_YEAR, message = "The year cannot be greater than " + MAX_YEAR + ".")
     Integer releaseYear,
 
-    @Min(value = MIN_DURATION, message = "The duration cannot be menos que " + MIN_DURATION + " minuto.")
+    @Min(value = MIN_DURATION, message = "The duration cannot be less than " + MIN_DURATION + " minute.")
     Integer durationMin,
 
     @NotNull

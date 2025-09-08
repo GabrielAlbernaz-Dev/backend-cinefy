@@ -25,8 +25,8 @@ public class MovieController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<MovieResponse> findById(@PathVariable UUID id) {
-        Movie movie = movieService.findById(id);
+    public ResponseEntity<MovieResponse> find(@PathVariable UUID id) {
+        Movie movie = movieService.getById(id);
         MovieResponse response = MovieResponse.fromEntity(movie);
         return ResponseEntity.ok(response);
     }

@@ -32,4 +32,30 @@ public class Person {
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    protected Person() {}
+
+    private Person(String name) {
+        this.name = name;
+    }
+
+    public static Person create(String name) {
+        return new Person(name);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
 }

@@ -1,7 +1,7 @@
 package com.gabrielalbernazdev.backend_cinefy.catalog.movie;
 
+import com.gabrielalbernazdev.backend_cinefy.catalog.cast.MovieCast;
 import com.gabrielalbernazdev.backend_cinefy.catalog.genre.Genre;
-import com.gabrielalbernazdev.backend_cinefy.catalog.cast.Person;
 
 import java.util.Set;
 import java.util.UUID;
@@ -12,7 +12,7 @@ public record MovieResponse(
     String description,
     ExhibitionStatus status,
     Set<Genre> genres,
-    Set<Person> cast,
+    Set<MovieCast> cast,
     Integer releaseYear,
     Integer durationMin,
     IndicativeRating indicativeRating

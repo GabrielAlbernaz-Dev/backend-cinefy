@@ -7,4 +7,3 @@ public final class MovieConstants {
 
     private MovieConstants() {}
 }
-
