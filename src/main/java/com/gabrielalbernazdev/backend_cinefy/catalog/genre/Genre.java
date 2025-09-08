@@ -12,10 +12,10 @@ public class Genre {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(nullable = false, length = 64, unique = true)
+    @Column(nullable = false, length = GenreConstants.CODE_MAX_LENGTH, unique = true)
     private String code;
 
-    @Column(nullable = false, length = 155)
+    @Column(nullable = false, length = GenreConstants.NAME_MAX_LENGTH)
     private String name;
 
     @Column(nullable = false)
@@ -37,5 +37,41 @@ public class Genre {
     @PreUpdate
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
+    }
+
+    protected Genre() {}
+
+    private Genre(String code, String name, boolean active) {
+        this.code = code;
+        this.name = name;
+        this.active = active;
+    }
+
+    public static Genre create(String code, String name) {
+        return new Genre(code, name, true);
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 }
