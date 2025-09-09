@@ -1,6 +1,8 @@
 package com.gabrielalbernazdev.backend_cinefy.catalog.movie;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.gabrielalbernazdev.backend_cinefy.catalog.genre.Genre;
+import com.gabrielalbernazdev.backend_cinefy.common.exception.DomainException;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -12,6 +14,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import com.gabrielalbernazdev.backend_cinefy.catalog.cast.MovieCast;
+import com.gabrielalbernazdev.backend_cinefy.catalog.cast.Person;
+import com.gabrielalbernazdev.backend_cinefy.catalog.cast.CastRole;
 
 import static com.gabrielalbernazdev.backend_cinefy.catalog.movie.MovieConstants.MIN_YEAR;
 import static com.gabrielalbernazdev.backend_cinefy.catalog.movie.MovieConstants.MAX_YEAR;
@@ -44,6 +48,7 @@ public class Movie {
     public Set<Genre> genres = new HashSet<>();
 
     @OneToMany(mappedBy = "movie", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<MovieCast> cast = new HashSet<>();
 
     @Min(value = MIN_YEAR, message = "The year cannot less than " + MIN_YEAR + ".")
@@ -96,7 +101,7 @@ public class Movie {
         this.durationMin = duration;
         this.indicativeRating = indicativeRating;
         this.genres = genres;
-        this.cast = cast;
+        this.cast = (cast == null) ? new HashSet<>() : new HashSet<>(cast);
     }
 
     public static Movie create(
@@ -104,12 +109,11 @@ public class Movie {
         String description,
         ExhibitionStatus status,
         Set<Genre> genres,
-        Set<MovieCast> cast,
         Integer releaseYear,
         Integer duration,
         IndicativeRating indicativeRating
     ) {
-        return new Movie(title, description, status, genres, cast, releaseYear, duration, indicativeRating);
+        return new Movie(title, description, status, genres, new HashSet<>(), releaseYear, duration, indicativeRating);
     }
 
     public UUID getId() {
@@ -162,7 +166,42 @@ public class Movie {
         this.durationMin = duration;
         this.indicativeRating = indicativeRating;
         this.genres = genres;
-        this.cast = cast;
+        this.replaceCast(cast);
+    }
+
+    public void addCast(Person person, CastRole role, String characterName) {
+        if (person == null) {
+            throw new DomainException("Person is required to add to movie cast.");
+        }
+        CastRole resolvedRole = role == null ? CastRole.OTHER : role;
+
+        boolean exists = this.cast.stream()
+                .anyMatch(mc -> mc.getPerson() != null && mc.getPerson().getId() != null
+                        && mc.getPerson().getId().equals(person.getId())
+                        && mc.getRole() == resolvedRole);
+        if (exists) {
+            return;
+        }
+
+        MovieCast mc = MovieCast.create(this, person, resolvedRole, characterName);
+        mc.setMovie(this);
+        this.cast.add(mc);
+    }
+
+    public void removeCast(Person person, CastRole role) {
+        if (person == null) return;
+        this.cast.removeIf(mc -> mc.getPerson() != null && mc.getPerson().getId() != null
+                && mc.getPerson().getId().equals(person.getId())
+                && (role == null || mc.getRole() == role));
+    }
+
+    public void replaceCast(Set<MovieCast> newCast) {
+        this.cast.clear();
+        if (newCast == null || newCast.isEmpty()) return;
+        for (MovieCast c : newCast) {
+            c.setMovie(this);
+            this.cast.add(c);
+        }
     }
 
     public void releasePreview() {

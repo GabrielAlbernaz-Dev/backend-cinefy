@@ -1,13 +1,13 @@
 package com.gabrielalbernazdev.backend_cinefy.catalog.movie;
 
-import com.gabrielalbernazdev.backend_cinefy.catalog.cast.MovieCast;
-import com.gabrielalbernazdev.backend_cinefy.catalog.genre.Genre;
+import com.gabrielalbernazdev.backend_cinefy.catalog.cast.CreateMovieCastRequest;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.util.Set;
+import java.util.UUID;
 
 import static com.gabrielalbernazdev.backend_cinefy.catalog.movie.MovieConstants.MIN_YEAR;
 import static com.gabrielalbernazdev.backend_cinefy.catalog.movie.MovieConstants.MAX_YEAR;
@@ -23,10 +23,10 @@ public record CreateMovieRequest(
     ExhibitionStatus status,
 
     @NotNull
-    Set<Genre> genres,
+    Set<UUID> genres,
 
     @NotNull
-    Set<MovieCast> cast,
+    Set<CreateMovieCastRequest> cast,
 
     @Min(value = MIN_YEAR, message = "The year cannot less than " + MIN_YEAR + ".")
     @Max(value = MAX_YEAR, message = "The year cannot be greater than " + MAX_YEAR + ".")

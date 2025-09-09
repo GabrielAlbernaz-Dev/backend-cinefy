@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 @Service
@@ -14,6 +16,14 @@ public class GenreService {
     @Autowired
     public GenreService(GenreRepository genreRepository) {
         this.genreRepository = genreRepository;
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Genre> getByIds(Set<UUID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return new HashSet<>();
+        }
+        return new HashSet<>(genreRepository.findAllById(ids));
     }
 
     @Transactional(readOnly = true)

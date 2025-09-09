@@ -64,6 +64,7 @@ public class MovieCast implements Serializable {
     }
 
     public Movie getMovie() { return movie; }
+    public void setMovie(Movie movie) { this.movie = movie; }
     public Person getPerson() { return person; }
     public CastRole getRole() { return role; }
     public String getCharacterName() { return characterName; }

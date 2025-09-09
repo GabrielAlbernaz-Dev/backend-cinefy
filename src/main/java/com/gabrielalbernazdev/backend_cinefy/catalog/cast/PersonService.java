@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
+import java.util.Set;
+import java.util.HashSet;
 
 @Service
 public class PersonService {
@@ -20,6 +22,14 @@ public class PersonService {
     public Person getById(UUID id) {
         return personRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Person not found: " + id));
+    }
+
+    @Transactional(readOnly = true)
+    public Set<Person> getByIds(Set<UUID> ids) {
+        if (ids == null || ids.isEmpty()) {
+            return new HashSet<>();
+        }
+        return new HashSet<>(personRepository.findAllById(ids));
     }
 
     @Transactional
